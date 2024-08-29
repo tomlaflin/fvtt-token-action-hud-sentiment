@@ -1,0 +1,41 @@
+{
+    "id": "token-action-hud-sentiment",
+    "title": "Token Action HUD Sentiment",
+    "description": "Specialization of the Token Action HUD module for the Sentiment TTRPG system.",
+    "authors": [
+        {
+            "name": "Tom Laflin",
+            "email": "tom.laflin@gmail.com",
+            "url": "https://github.com/tomlaflin"
+        }
+    ],
+    "url": "https://github.com/tomlaflin/fvtt-token-action-hud-sentiment",
+    "version": "0.1.0",
+    "compatibility": {
+        "verified": "11"
+    },
+    "esmodules": [
+        "./scripts/token-action-hud-sentiment.mjs"
+    ],
+    "relationships": {
+        "systems": [
+            {
+                "id": "sentiment",
+                "type": "system",
+                "manifest": "https://raw.githubusercontent.com/tomlaflin/sentiment/main/system.json",
+                "compatibility": {
+                    "verified": "0.1"
+                }
+            }
+        ],
+        "requires": [
+            {
+                "id": "token-action-hud-core",
+                "type": "module",
+                "compatibility": {
+                    "verified": "1.5.6"
+                }
+            }
+        ]
+    }
+}
