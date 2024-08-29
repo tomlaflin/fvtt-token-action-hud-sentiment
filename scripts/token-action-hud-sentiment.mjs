@@ -43,12 +43,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         nestId: 'rolls',
                         name: 'Rolls',
                         groups: [
-                            { id: 'core', nestId: 'rolls_core', name: 'Core', type: 'system' }
+                            { id: 'core', nestId: 'rolls_core', name: 'Core', type: 'system' },
+                            { id: 'custom', nestId: 'rolls_custom', name: 'Custom', type: 'system' }
                         ]
                     }
                 ],
                 group: [
-                    { id: 'core', name: 'Core', type: 'system' }
+                    { id: 'core', name: 'Core', type: 'system' },
+                    { id: 'custom', name: 'Custom', type: 'system' }
                 ]
             };
         }
@@ -60,6 +62,34 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         registerSettings(onChangeFunction) {}
     }
 
+    const ActionType = Object.freeze({
+        RollToDo: "roll-to-do",
+        RollToDye: "roll-to-dye",
+        RecoveryRoll: "recovery-roll",
+        CustomRoll: "custom-roll"
+    });
+
+    const CoreRollAction = Object.freeze({
+        RollToDo: {
+            id: ActionType.RollToDo,
+            name: "Roll to Do",
+            encodedValue: ActionType.RollToDo,
+            img: "icons/svg/d20-grey.svg"
+        },
+        RollToDye: {
+            id: ActionType.RollToDye,
+            name: "Roll to Dye",
+            encodedValue: ActionType.RollToDye,
+            img: "icons/svg/d6-grey.svg"
+        },
+        RecoveryRoll: {
+            id: ActionType.RecoveryRoll,
+            name: "Recovery Roll",
+            encodedValue: ActionType.RecoveryRoll,
+            img: "icons/svg/heal.svg"
+        }
+    })
+
     /**
      * Extends Token Action HUD Core's ActionHandler class and builds system-defined actions for the HUD.
      */
@@ -70,34 +100,59 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {array}
          */
         async buildSystemActions(_) {
-            const group = {
+            const coreGroup = {
                 id: 'core',
                 type: 'system'
             };
 
-            this.addGroup(group);
+            this.addGroup(coreGroup);
             this.addActions(
                 [
-                    {
-                        id: 'roll_to_do',
-                        name: "Roll to Do",
-                        encodedValue: '',
-                        img: "icons/svg/d20-grey.svg"
-                    },
-                    {
-                        id: 'roll_to_dye',
-                        name: "Roll to Dye",
-                        encodedValue: '',
-                        img: "icons/svg/d6-grey.svg"
-                    },
-                    {
-                        id: 'roll_to_recover',
-                        name: "Roll to Recover",
-                        encodedValue: '',
-                        img: "icons/svg/heal.svg"
-                    }
+                    CoreRollAction.RollToDo,
+                    CoreRollAction.RollToDye,
+                    CoreRollAction.RecoveryRoll
                 ],
-                group);
+                coreGroup);
+
+            if (this.actor.system.customRolls.length > 0) {
+                const customGroup = {
+                    id: 'custom',
+                    type: 'system'
+                }
+
+                const actions = this.actor.system.customRolls.map((customRoll) => {
+                    const value = {
+                        action: ActionType.CustomRoll,
+                        customRoll
+                    };
+
+                    let img = "";
+                    switch (customRoll.rollType) {
+                        case CONFIG.Sentiment.RollType.RollToDo:
+                            img = CoreRollAction.RollToDo.img;
+                            break;
+                        case CONFIG.Sentiment.RollType.RollToDye:
+                            img = CoreRollAction.RollToDye.img;
+                            break;
+                        case CONFIG.Sentiment.RollType.RecoveryRoll:
+                            img = CoreRollAction.RecoveryRoll.img;
+                            break;
+                        default:
+                            console.error("Unexpected rollType for custom roll " + customRoll.name + " encountered in buildSystemActions");
+                            break;
+                    }
+
+                    return {
+                        id: ActionType.CustomRoll + '_' + customRoll.name,
+                        name: customRoll.name,
+                        encodedValue: JSON.stringify(value),
+                        img
+                    }
+                });
+
+                this.addGroup(customGroup);
+                this.addActions(actions, customGroup);
+            }
         }
     }
 
@@ -111,17 +166,31 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} event
          * @param {string} code 
          */
-        handleActionClick(event, code) {}
-
+        handleActionClick(event, encodedValue) {
+            console.log(encodedValue);
+            switch (encodedValue) {
+                case ActionType.RollToDo:
+                    this.actor.rollToDo();
+                    break;
+                case ActionType.RollToDye:
+                    this.actor.rollToDye();
+                    break;
+                case ActionType.RecoveryRoll:
+                    this.actor.recoveryRoll();
+                    break;
+                default:
+                    console.error("Unexpected encodedValue encountered in handleActionClick");
+                    break;
+            }
+        }
     }
-
 })
 
-const ID = 'token-action-hud-sentiment'
+const MODULE_ID = 'token-action-hud-sentiment'
 const REQUIRED_CORE_MODULE_VERSION = '1.5'
 
 Hooks.on('tokenActionHudCoreApiReady', async () => {
-    const module = game.modules.get(ID)
+    const module = game.modules.get(MODULE_ID)
     module.api = {
         requiredCoreModuleVersion: REQUIRED_CORE_MODULE_VERSION,
         SystemManager
