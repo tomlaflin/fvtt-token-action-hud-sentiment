@@ -46,6 +46,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             { id: 'core', nestId: 'rolls_core', name: 'Core', type: 'system' },
                             { id: 'custom', nestId: 'rolls_custom', name: 'Custom', type: 'system' }
                         ]
+                    },
+                    {
+                        id: 'attribute-status',
+                        nestId: 'attribute-status',
+                        name: 'Attribute Status',
+                        groups: []
                     }
                 ],
                 group: [
@@ -66,7 +72,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         RollToDo: "roll-to-do",
         RollToDye: "roll-to-dye",
         RecoveryRoll: "recovery-roll",
-        CustomRoll: "custom-roll"
+        CustomRoll: "custom-roll",
+        SetAttributeStatus: "set-attribute-status"
     });
 
     const CoreRollAction = Object.freeze({
@@ -115,13 +122,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 coreGroup);
 
             const customRolls = this.actor.items.filter((item) => item.type == "customRoll");
-            console.log(customRolls);
 
             if (customRolls.length > 0) {
                 const customGroup = {
                     id: 'custom',
                     type: 'system'
-                }
+                };
 
                 const actions = customRolls.map((customRoll) => {
                     const value = {
@@ -136,18 +142,48 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     }
 
                     return {
-                        id: ActionType.CustomRoll + '_' + customRoll.name,
+                        id: ActionType.CustomRoll + '_' + customRoll._id,
                         name: customRoll.name,
                         encodedValue: JSON.stringify(value),
                         img: coreRollAction.img
                     }
                 });
 
-                console.log(actions);
-
                 this.addGroup(customGroup);
                 this.addActions(actions, customGroup);
             }
+
+            const attributeStatusParentGroup = { id: 'attribute-status' };
+            this.actor.items.filter((item) => item.type == "attribute").forEach((attribute) => {
+
+                const attributeStatusGroup = {
+                    id: 'attribute-' + attribute._id,
+                    name: attribute.name,
+                    type: 'system-derived',
+                    settings: {
+                        showTitle: true,
+                        //image: attribute.img
+                    }
+                }
+
+                const actions = [
+                    {
+                        id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_normal',
+                        name: "Normal"
+                    },
+                    {
+                        id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_locked-out',
+                        name: "Locked Out"
+                    },
+                    {
+                        id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_wounded',
+                        name: "Wounded"
+                    }
+                ];
+
+                this.addGroup(attributeStatusGroup, attributeStatusParentGroup);
+                this.addActions(actions, attributeStatusGroup);
+            });
         }
     }
 
