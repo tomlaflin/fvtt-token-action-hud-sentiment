@@ -72,20 +72,20 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
     const CoreRollAction = Object.freeze({
         RollToDo: {
             id: ActionType.RollToDo,
-            name: "Roll to Do",
-            encodedValue: ActionType.RollToDo,
+            name: CONFIG.Sentiment.RollTypes.RollToDo.DisplayName,
+            encodedValue: { action: ActionType.RollToDo },
             img: "icons/svg/d20-grey.svg"
         },
         RollToDye: {
             id: ActionType.RollToDye,
-            name: "Roll to Dye",
-            encodedValue: ActionType.RollToDye,
+            name: CONFIG.Sentiment.RollTypes.RollToDye.DisplayName,
+            encodedValue: { action: ActionType.RollToDye },
             img: "icons/svg/d6-grey.svg"
         },
         RecoveryRoll: {
             id: ActionType.RecoveryRoll,
-            name: "Recovery Roll",
-            encodedValue: ActionType.RecoveryRoll,
+            name: CONFIG.Sentiment.RollTypes.RecoveryRoll.DisplayName,
+            encodedValue: { action: ActionType.RecoveryRoll },
             img: "icons/svg/heal.svg"
         }
     })
@@ -114,41 +114,36 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 ],
                 coreGroup);
 
-            if (this.actor.system.customRolls.length > 0) {
+            const customRolls = this.actor.items.filter((item) => item.type == "customRoll");
+            console.log(customRolls);
+
+            if (customRolls.length > 0) {
                 const customGroup = {
                     id: 'custom',
                     type: 'system'
                 }
 
-                const actions = this.actor.system.customRolls.map((customRoll) => {
+                const actions = customRolls.map((customRoll) => {
                     const value = {
                         action: ActionType.CustomRoll,
                         customRoll
                     };
 
-                    let img = "";
-                    switch (customRoll.rollType) {
-                        case CONFIG.Sentiment.RollType.RollToDo:
-                            img = CoreRollAction.RollToDo.img;
-                            break;
-                        case CONFIG.Sentiment.RollType.RollToDye:
-                            img = CoreRollAction.RollToDye.img;
-                            break;
-                        case CONFIG.Sentiment.RollType.RecoveryRoll:
-                            img = CoreRollAction.RecoveryRoll.img;
-                            break;
-                        default:
-                            console.error("Unexpected rollType for custom roll " + customRoll.name + " encountered in buildSystemActions");
-                            break;
+                    const coreRollAction = CoreRollAction[customRoll.system.rollType];
+                    if (!coreRollAction) {
+                        console.error("Unexpected roll type " + customRoll.system.rollType + " on Custom Roll with ID  " + customRoll._id);
+                        return {};
                     }
 
                     return {
                         id: ActionType.CustomRoll + '_' + customRoll.name,
                         name: customRoll.name,
                         encodedValue: JSON.stringify(value),
-                        img
+                        img: coreRollAction.img
                     }
                 });
+
+                console.log(actions);
 
                 this.addGroup(customGroup);
                 this.addActions(actions, customGroup);
@@ -167,8 +162,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {string} code 
          */
         handleActionClick(event, encodedValue) {
-            console.log(encodedValue);
-            switch (encodedValue) {
+            const value = JSON.parse(encodedValue);
+            console.log(value);
+
+            switch (value.action) {
                 case ActionType.RollToDo:
                     this.actor.rollToDo();
                     break;
@@ -177,6 +174,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     break;
                 case ActionType.RecoveryRoll:
                     this.actor.recoveryRoll();
+                    break;
+                case ActionType.CustomRoll:
+                    this.actor.executeCustomRoll(value.customRoll._id);
                     break;
                 default:
                     console.error("Unexpected encodedValue encountered in handleActionClick");
