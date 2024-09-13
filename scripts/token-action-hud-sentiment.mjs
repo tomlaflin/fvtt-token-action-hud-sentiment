@@ -80,19 +80,19 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         RollToDo: {
             id: ActionType.RollToDo,
             name: CONFIG.Sentiment.RollTypes.RollToDo.DisplayName,
-            encodedValue: { action: ActionType.RollToDo },
+            encodedValue: JSON.stringify({ action: ActionType.RollToDo }),
             img: "icons/svg/d20-grey.svg"
         },
         RollToDye: {
             id: ActionType.RollToDye,
             name: CONFIG.Sentiment.RollTypes.RollToDye.DisplayName,
-            encodedValue: { action: ActionType.RollToDye },
+            encodedValue: JSON.stringify({ action: ActionType.RollToDye }),
             img: "icons/svg/d6-grey.svg"
         },
         RecoveryRoll: {
             id: ActionType.RecoveryRoll,
             name: CONFIG.Sentiment.RollTypes.RecoveryRoll.DisplayName,
-            encodedValue: { action: ActionType.RecoveryRoll },
+            encodedValue: JSON.stringify({ action: ActionType.RecoveryRoll }),
             img: "icons/svg/heal.svg"
         }
     })
