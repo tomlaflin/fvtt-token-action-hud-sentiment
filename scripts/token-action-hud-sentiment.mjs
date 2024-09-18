@@ -175,16 +175,31 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         {
                             id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_normal',
                             name: "Normal",
+                            encodedValue: JSON.stringify({
+                                action: ActionType.SetAttributeStatus,
+                                attributeId: attribute._id,
+                                status: CONFIG.Sentiment.AttributeStatus.Normal
+                            }),
                             cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.Normal ? "toggle active" : "toggle"
                         },
                         {
                             id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_locked-out',
                             name: "Locked Out",
+                            encodedValue: JSON.stringify({
+                                action: ActionType.SetAttributeStatus,
+                                attributeId: attribute._id,
+                                status: CONFIG.Sentiment.AttributeStatus.LockedOut
+                            }),
                             cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.LockedOut ? "toggle active" : "toggle"
                         },
                         {
                             id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_wounded',
                             name: "Wounded",
+                            encodedValue: JSON.stringify({
+                                action: ActionType.SetAttributeStatus,
+                                attributeId: attribute._id,
+                                status: CONFIG.Sentiment.AttributeStatus.Wounded
+                            }),
                             cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.Wounded ? "toggle active" : "toggle"
                         }
                     ];
@@ -222,6 +237,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     break;
                 case ActionType.CustomRoll:
                     this.actor.executeCustomRoll(value.customRoll._id);
+                    break;
+                case ActionType.SetAttributeStatus:
+                    this.actor.setAttributeStatus(value.attributeId, value.status);
                     break;
                 default:
                     console.error("Unexpected encodedValue encountered in handleActionClick");
