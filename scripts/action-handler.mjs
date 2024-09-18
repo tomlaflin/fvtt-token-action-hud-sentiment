@@ -18,7 +18,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
     /**
     * The types of rolls core to the Sentiment system and associated properties.
     */
-    const CoreRollAction = Object.freeze({
+    const CoreRollActions = Object.freeze({
         RollToDo: {
             id: ActionType.RollToDo,
             name: CONFIG.Sentiment.RollTypes.RollToDo.DisplayName,
@@ -63,9 +63,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.addGroup(CORE_ROLLS_GROUP);
             this.addActions(
                 [
-                    CoreRollAction.RollToDo,
-                    CoreRollAction.RollToDye,
-                    CoreRollAction.RecoveryRoll
+                    CoreRollActions.RollToDo,
+                    CoreRollActions.RollToDye,
+                    CoreRollActions.RecoveryRoll
                 ],
                 CORE_ROLLS_GROUP);
         }
@@ -85,7 +85,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     customRoll
                 };
 
-                const coreRollAction = CoreRollAction[customRoll.system.rollType];
+                const coreRollAction = CoreRollActions[customRoll.system.rollType];
                 if (!coreRollAction) {
                     console.error("Unexpected roll type " + customRoll.system.rollType + " on Custom Roll with ID  " + customRoll._id);
                     return {};
