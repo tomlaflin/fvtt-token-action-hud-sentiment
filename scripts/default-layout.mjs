@@ -5,8 +5,8 @@ export const DEFAULT_LAYOUT = Object.freeze({
             nestId: 'rolls',
             name: 'Rolls',
             groups: [
-                { id: 'core', nestId: 'rolls_core', name: 'Core', type: 'system' },
-                { id: 'custom', nestId: 'rolls_custom', name: 'Custom', type: 'system' }
+                { id: 'core-rolls', nestId: 'rolls_core-rolls', name: 'Core', type: 'system' },
+                { id: 'custom-rolls', nestId: 'rolls_custom-rolls', name: 'Custom', type: 'system' }
             ]
         },
         {
@@ -23,8 +23,8 @@ export const DEFAULT_LAYOUT = Object.freeze({
         }
     ],
     group: [
-        { id: 'core', name: 'Core', type: 'system' },
-        { id: 'custom', name: 'Custom', type: 'system' },
+        { id: 'core-rolls', name: 'Core', type: 'system' },
+        { id: 'custom-rolls', name: 'Custom', type: 'system' },
         { id: 'swing-none', name: 'None', type: 'system' }
     ]
 });
