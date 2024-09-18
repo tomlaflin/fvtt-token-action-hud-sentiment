@@ -154,36 +154,41 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
 
             const attributeStatusParentGroup = { id: 'attribute-status' };
-            this.actor.items.filter((item) => item.type == "attribute").forEach((attribute) => {
-
-                const attributeStatusGroup = {
-                    id: 'attribute-' + attribute._id,
-                    name: attribute.name,
-                    type: 'system-derived',
-                    settings: {
-                        showTitle: true,
-                        //image: attribute.img
+            const attributes = this.actor.items.filter((item) => item.type == "attribute");
+            if (!attributes.length) {
+                this.removeGroup(attributeStatusParentGroup);
+            }
+            else {
+                attributes.forEach((attribute) => {
+                    const attributeStatusGroup = {
+                        id: 'attribute-' + attribute._id,
+                        name: attribute.name,
+                        type: 'system-derived',
+                        settings: {
+                            showTitle: true,
+                            //image: attribute.img
+                        }
                     }
-                }
 
-                const actions = [
-                    {
-                        id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_normal',
-                        name: "Normal"
-                    },
-                    {
-                        id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_locked-out',
-                        name: "Locked Out"
-                    },
-                    {
-                        id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_wounded',
-                        name: "Wounded"
-                    }
-                ];
+                    const actions = [
+                        {
+                            id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_normal',
+                            name: "Normal"
+                        },
+                        {
+                            id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_locked-out',
+                            name: "Locked Out"
+                        },
+                        {
+                            id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_wounded',
+                            name: "Wounded"
+                        }
+                    ];
 
-                this.addGroup(attributeStatusGroup, attributeStatusParentGroup);
-                this.addActions(actions, attributeStatusGroup);
-            });
+                    this.addGroup(attributeStatusGroup, attributeStatusParentGroup);
+                    this.addActions(actions, attributeStatusGroup);
+                });
+            }  
         }
     }
 
