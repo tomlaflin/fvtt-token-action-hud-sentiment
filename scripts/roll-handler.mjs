@@ -16,7 +16,6 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
          */
         handleActionClick(event, encodedValue) {
             const value = JSON.parse(encodedValue);
-            console.log(value);
 
             switch (value.action) {
                 case ActionType.RollToDo:

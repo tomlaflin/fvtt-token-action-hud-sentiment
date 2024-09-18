@@ -118,10 +118,7 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
                     id: `${ActionType.SetAttributeStatus}_${attribute._id}`,
                     name: attribute.name,
                     type: GroupType.SystemDerived,
-                    settings: {
-                        showTitle: true,
-                        //image: attribute.img
-                    }
+                    settings: { showTitle: true }
                 }
 
                 const currentStatus = attribute.system.status;
@@ -195,10 +192,7 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
                     id: `${ActionType.SetSwing}_${attribute._id}`,
                     name: attribute.name,
                     type: GroupType.SystemDerived,
-                    settings: {
-                        showTitle: true,
-                        //image: attribute.img
-                    }
+                    settings: { showTitle: true }
                 }
 
                 const actions = [];
