@@ -52,11 +52,18 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         nestId: 'attribute-status',
                         name: 'Attribute Status',
                         groups: []
+                    },
+                    {
+                        id: 'swing',
+                        nestId: 'swing',
+                        name: 'Swing',
+                        groups: [{ id: 'swing-none', nestId: 'swing_swing-none', name: 'None', type: 'system' }]
                     }
                 ],
                 group: [
                     { id: 'core', name: 'Core', type: 'system' },
-                    { id: 'custom', name: 'Custom', type: 'system' }
+                    { id: 'custom', name: 'Custom', type: 'system' },
+                    { id: 'swing-none', name: 'None', type: 'system' }
                 ]
             };
         }
@@ -73,7 +80,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         RollToDye: "roll-to-dye",
         RecoveryRoll: "recovery-roll",
         CustomRoll: "custom-roll",
-        SetAttributeStatus: "set-attribute-status"
+        SetAttributeStatus: "set-attribute-status",
+        DropSwing: "drop-swing",
+        SetSwing: "set-swing"
     });
 
     const CoreRollAction = Object.freeze({
@@ -161,7 +170,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             else {
                 attributes.forEach((attribute) => {
                     const attributeStatusGroup = {
-                        id: 'attribute-' + attribute._id,
+                        id: ActionType.SetAttributeStatus + '_' + attribute._id,
                         name: attribute.name,
                         type: 'system-derived',
                         settings: {
@@ -173,7 +182,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     const currentStatus = attribute.system.status;
                     const actions = [
                         {
-                            id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_normal',
+                            id: attributeStatusGroup.id + '_normal',
                             name: "Normal",
                             encodedValue: JSON.stringify({
                                 action: ActionType.SetAttributeStatus,
@@ -183,7 +192,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.Normal ? "toggle active" : "toggle"
                         },
                         {
-                            id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_locked-out',
+                            id: attributeStatusGroup.id + '_locked-out',
                             name: "Locked Out",
                             encodedValue: JSON.stringify({
                                 action: ActionType.SetAttributeStatus,
@@ -193,7 +202,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.LockedOut ? "toggle active" : "toggle"
                         },
                         {
-                            id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_wounded',
+                            id: attributeStatusGroup.id + '_wounded',
                             name: "Wounded",
                             encodedValue: JSON.stringify({
                                 action: ActionType.SetAttributeStatus,
@@ -206,6 +215,63 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
                     this.addGroup(attributeStatusGroup, attributeStatusParentGroup);
                     this.addActions(actions, attributeStatusGroup);
+                });
+            }
+
+            const swingParentGroup = { id: 'swing' };
+            const healthyAttributes = attributes.filter((attribute) => attribute.system.status == CONFIG.Sentiment.AttributeStatus.Normal);
+
+            if (!healthyAttributes.length) {
+                this.removeGroup(swingParentGroup);
+            }
+            else {
+                const currentSwing = this.actor.system.swing;
+                const swingNoneGroup = {
+                    id: 'swing-none',
+                    type: 'system'
+                };
+
+                const swingNoneAction = {
+                    id: 'swing-none-action',
+                    name: "None",
+                    encodedValue: JSON.stringify({ action: ActionType.DropSwing }),
+                    cssClass: 'toggle'
+                };
+
+                if (currentSwing.attributeId === CONFIG.Sentiment.AttributeIdNoSwing) {
+                    swingNoneAction.cssClass += ' active';
+                }
+
+                this.addGroup(swingNoneGroup, swingParentGroup);
+                this.addActions([swingNoneAction], swingNoneGroup);
+
+                healthyAttributes.forEach((attribute) => {
+                    const attributeSetSwingGroup = {
+                        id: ActionType.SetSwing + '_' + attribute._id,
+                        name: attribute.name,
+                        type: 'system-derived',
+                        settings: {
+                            showTitle: true,
+                            //image: attribute.img
+                        }
+                    }
+                    
+                    const actions = [];
+                    for (let swingValue = attribute.system.modifier + 1; swingValue < attribute.system.modifier + 7; swingValue++) {
+                        actions.push({
+                            id: attributeSetSwingGroup.id + '_' + swingValue,
+                            name: `${swingValue}`,
+                            encodedValue: JSON.stringify({
+                                action: ActionType.SetSwing,
+                                attributeId: attribute._id,
+                                swingValue
+                            }),
+                            cssClass: currentSwing.attributeId === attribute._id && currentSwing.value === swingValue ? "toggle active" : "toggle"
+                        });
+                    }
+
+                    this.addGroup(attributeSetSwingGroup, swingParentGroup);
+                    this.addActions(actions, attributeSetSwingGroup);
                 });
             }  
         }
@@ -240,6 +306,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     break;
                 case ActionType.SetAttributeStatus:
                     this.actor.setAttributeStatus(value.attributeId, value.status);
+                    break;
+                case ActionType.DropSwing:
+                    this.actor.dropSwing();
+                    break;
+                case ActionType.SetSwing:
+                    this.actor.setSwing(value.attributeId, value.swingValue);
                     break;
                 default:
                     console.error("Unexpected encodedValue encountered in handleActionClick");
