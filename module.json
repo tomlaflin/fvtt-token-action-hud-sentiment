@@ -12,7 +12,8 @@
     "url": "https://github.com/tomlaflin/fvtt-token-action-hud-sentiment",
     "version": "0.1.0",
     "compatibility": {
-        "verified": "11"
+        "minimum": "11",
+        "verified": "12.331"
     },
     "esmodules": [
         "./scripts/init.mjs"
