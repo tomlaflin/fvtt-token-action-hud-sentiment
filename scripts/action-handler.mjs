@@ -119,39 +119,19 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
                     settings: { showTitle: true }
                 }
 
-                const currentStatus = attribute.system.status;
-                const actions = [
-                    {
-                        id: `${attributeStatusGroup.id}_normal`,
-                        name: "Normal",
+                const actions = [];
+                CONFIG.Sentiment.AttributeStatusStrings.forEach((statusString, status) => {
+                    actions.push({
+                        id: `${attributeStatusGroup.id}_${statusString}`,
+                        name: statusString,
                         encodedValue: JSON.stringify({
                             action: ActionType.SetAttributeStatus,
                             attributeId: attribute._id,
-                            status: CONFIG.Sentiment.AttributeStatus.Normal
+                            status
                         }),
-                        cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.Normal ? "toggle active" : "toggle"
-                    },
-                    {
-                        id: `${attributeStatusGroup.id}_locked-out`,
-                        name: "Locked Out",
-                        encodedValue: JSON.stringify({
-                            action: ActionType.SetAttributeStatus,
-                            attributeId: attribute._id,
-                            status: CONFIG.Sentiment.AttributeStatus.LockedOut
-                        }),
-                        cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.LockedOut ? "toggle active" : "toggle"
-                    },
-                    {
-                        id: `${attributeStatusGroup.id}_wounded`,
-                        name: "Wounded",
-                        encodedValue: JSON.stringify({
-                            action: ActionType.SetAttributeStatus,
-                            attributeId: attribute._id,
-                            status: CONFIG.Sentiment.AttributeStatus.Wounded
-                        }),
-                        cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.Wounded ? "toggle active" : "toggle"
-                    }
-                ];
+                        cssClass: attribute.system.status === status ? "toggle active" : "toggle"
+                    });
+                });
 
                 this.addGroup(attributeStatusGroup, ATTRIBUTE_STATUS_GROUP);
                 this.addActions(actions, attributeStatusGroup);
