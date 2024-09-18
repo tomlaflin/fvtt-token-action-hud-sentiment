@@ -80,11 +80,6 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
             }
 
             const actions = customRolls.map((customRoll) => {
-                const value = {
-                    action: ActionType.CustomRoll,
-                    customRoll
-                };
-
                 const coreRollAction = CoreRollActions[customRoll.system.rollType];
                 if (!coreRollAction) {
                     console.error(`Unexpected roll type ${customRoll.system.rollType} on Custom Roll with ID ${customRoll._id}`);
@@ -94,7 +89,10 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
                 return {
                     id: `${ActionType.CustomRoll}_${customRoll._id}`,
                     name: customRoll.name,
-                    encodedValue: JSON.stringify(value),
+                    encodedValue: JSON.stringify({
+                        action: ActionType.CustomRoll,
+                        customRollId: customRoll._id
+                    }),
                     img: coreRollAction.img
                 }
             });

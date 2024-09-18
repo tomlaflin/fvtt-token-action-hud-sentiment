@@ -28,7 +28,7 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
                     this.actor.recoveryRoll();
                     break;
                 case ActionType.CustomRoll:
-                    this.actor.executeCustomRoll(value.customRoll._id);
+                    this.actor.executeCustomRoll(value.customRollId);
                     break;
                 case ActionType.SetAttributeStatus:
                     this.actor.setAttributeStatus(value.attributeId, value.status);
