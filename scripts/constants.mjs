@@ -2,10 +2,10 @@
  * Group types. Duplicated from Token Action HUD Core module.
  */
 export const GroupType = {
-    Compendium: 'compendium',
-    Custom: 'custom',
-    System: 'system',
-    SystemDerived: 'system-derived'
+    Compendium: "compendium",
+    Custom: "custom",
+    System: "system",
+    SystemDerived: "system-derived"
 }
 
 /**

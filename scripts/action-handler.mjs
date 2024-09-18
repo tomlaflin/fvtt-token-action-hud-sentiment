@@ -1,7 +1,7 @@
 import {
     ActionType,
     GroupType
-} from './constants.mjs'
+} from "./constants.mjs"
 
 import {
     CORE_ROLLS_GROUP,
@@ -9,11 +9,11 @@ import {
     ATTRIBUTE_STATUS_GROUP,
     SWING_GROUP,
     SWING_NONE_GROUP
-} from './groups.mjs'
+} from "./groups.mjs"
 
 export let ActionHandler = null;
 
-Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
+Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
 
     /**
     * The types of rolls core to the Sentiment system and associated properties.
@@ -40,7 +40,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
     });
 
     /**
-     * Extends Token Action HUD Core's ActionHandler class and builds system-defined actions for the HUD.
+     * Extends Token Action HUD Core"s ActionHandler class and builds system-defined actions for the HUD.
      */
     ActionHandler = class ActionHandler extends coreModule.api.ActionHandler {
 
@@ -177,14 +177,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const currentSwing = this.actor.system.swing;
 
             const swingNoneAction = {
-                id: 'swing-none-action',
+                id: "swing-none-action",
                 name: "None",
                 encodedValue: JSON.stringify({ action: ActionType.DropSwing }),
-                cssClass: 'toggle'
+                cssClass: "toggle"
             };
 
             if (currentSwing.attributeId === CONFIG.Sentiment.AttributeIdNoSwing) {
-                swingNoneAction.cssClass += ' active';
+                swingNoneAction.cssClass += " active";
             }
 
             this.addGroup(SWING_NONE_GROUP, SWING_GROUP);

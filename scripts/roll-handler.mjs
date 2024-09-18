@@ -1,8 +1,8 @@
-import { ActionType } from './constants.mjs'
+import { ActionType } from "./constants.mjs"
 
 export let RollHandler = null;
 
-Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
+Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
 
     /**
     * Extends Token Action HUD Core's RollHandler class and handles action events triggered when an action is clicked.

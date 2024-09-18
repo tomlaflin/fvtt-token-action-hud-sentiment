@@ -1,10 +1,10 @@
-import { ActionHandler } from './action-handler.mjs'
-import { RollHandler } from './roll-handler.mjs'
-import { DEFAULT_LAYOUT } from './groups.mjs'
+import { ActionHandler } from "./action-handler.mjs"
+import { RollHandler } from "./roll-handler.mjs"
+import { DEFAULT_LAYOUT } from "./groups.mjs"
 
 export let SystemManager = null
 
-Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
+Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
     SystemManager = class SystemManager extends coreModule.api.SystemManager {
 
         /** Returns an instance of the ActionHandler to Token Action HUD Core.
@@ -21,7 +21,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @returns {object} The available roll handlers
          */
         getAvailableRollHandlers() {
-            return { core: 'Sentiment' }
+            return { core: "Sentiment" }
         }
 
         /** Returns an instance of the RollHandler to Token Action HUD Core.
