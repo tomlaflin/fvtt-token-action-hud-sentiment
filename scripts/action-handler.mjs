@@ -1,90 +1,12 @@
+import { ActionType } from './constants.mjs'
 
-let SystemManager, ActionHandler, RollHandler;
+export let ActionHandler = null;
 
 Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
-    SystemManager = class SystemManager extends coreModule.api.SystemManager {
-
-        /** Returns an instance of the ActionHandler to Token Action HUD Core.
-         * @override
-         * @returns {class} The ActionHandler instance
-         */
-        getActionHandler() {
-            return new ActionHandler();
-        }
-
-        /** Returns a list of roll handlers to Token Action HUD Core.
-         * Used to populate the Roll Handler module setting choices.
-         * @override
-         * @returns {object} The available roll handlers
-         */
-        getAvailableRollHandlers() {
-            return { core: 'Sentiment' }
-        }
-
-        /** Returns an instance of the RollHandler to Token Action HUD Core.
-         * @override
-         * @param {string} id   The roll handler ID
-         * @returns {class}     The RollHandler instance
-         */
-        getRollHandler(id) {
-            return new RollHandler();
-        }
-
-        /** Returns the default layout and groups to Token Action HUD Core.
-         * @override
-         * @returns {object} The default layout and groups
-         */
-        async registerDefaults() {
-            return {
-                layout: [
-                    {
-                        id: 'rolls',
-                        nestId: 'rolls',
-                        name: 'Rolls',
-                        groups: [
-                            { id: 'core', nestId: 'rolls_core', name: 'Core', type: 'system' },
-                            { id: 'custom', nestId: 'rolls_custom', name: 'Custom', type: 'system' }
-                        ]
-                    },
-                    {
-                        id: 'attribute-status',
-                        nestId: 'attribute-status',
-                        name: 'Attribute Status',
-                        groups: []
-                    },
-                    {
-                        id: 'swing',
-                        nestId: 'swing',
-                        name: 'Swing',
-                        groups: [{ id: 'swing-none', nestId: 'swing_swing-none', name: 'None', type: 'system' }]
-                    }
-                ],
-                group: [
-                    { id: 'core', name: 'Core', type: 'system' },
-                    { id: 'custom', name: 'Custom', type: 'system' },
-                    { id: 'swing-none', name: 'None', type: 'system' }
-                ]
-            };
-        }
-
-        /** Register Token Action HUD system module settings.
-         * @override
-         * @param {function} onChangeFunction The Token Action HUD Core update function
-         */
-        registerSettings(onChangeFunction) {}
-    }
-
-    const ActionType = Object.freeze({
-        RollToDo: "roll-to-do",
-        RollToDye: "roll-to-dye",
-        RecoveryRoll: "recovery-roll",
-        CustomRoll: "custom-roll",
-        SetAttributeStatus: "set-attribute-status",
-        DropSwing: "drop-swing",
-        SetSwing: "set-swing"
-    });
-
+    /**
+    * The types of rolls core to the Sentiment system and associated properties.
+    */
     const CoreRollAction = Object.freeze({
         RollToDo: {
             id: ActionType.RollToDo,
@@ -104,7 +26,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             encodedValue: JSON.stringify({ action: ActionType.RecoveryRoll }),
             img: "icons/svg/heal.svg"
         }
-    })
+    });
 
     /**
      * Extends Token Action HUD Core's ActionHandler class and builds system-defined actions for the HUD.
@@ -255,7 +177,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             //image: attribute.img
                         }
                     }
-                    
+
                     const actions = [];
                     for (let swingValue = attribute.system.modifier + 1; swingValue < attribute.system.modifier + 7; swingValue++) {
                         actions.push({
@@ -273,62 +195,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     this.addGroup(attributeSetSwingGroup, swingParentGroup);
                     this.addActions(actions, attributeSetSwingGroup);
                 });
-            }  
-        }
-    }
-
-    /**
-     * Extends Token Action HUD Core's RollHandler class and handles action events triggered when an action is clicked.
-     */
-    RollHandler = class RollHandler extends coreModule.api.RollHandler {
-
-        /** Handle when an action is left or right-clicked.
-         * @override
-         * @param {object} event
-         * @param {string} code 
-         */
-        handleActionClick(event, encodedValue) {
-            const value = JSON.parse(encodedValue);
-            console.log(value);
-
-            switch (value.action) {
-                case ActionType.RollToDo:
-                    this.actor.rollToDo();
-                    break;
-                case ActionType.RollToDye:
-                    this.actor.rollToDye();
-                    break;
-                case ActionType.RecoveryRoll:
-                    this.actor.recoveryRoll();
-                    break;
-                case ActionType.CustomRoll:
-                    this.actor.executeCustomRoll(value.customRoll._id);
-                    break;
-                case ActionType.SetAttributeStatus:
-                    this.actor.setAttributeStatus(value.attributeId, value.status);
-                    break;
-                case ActionType.DropSwing:
-                    this.actor.dropSwing();
-                    break;
-                case ActionType.SetSwing:
-                    this.actor.setSwing(value.attributeId, value.swingValue);
-                    break;
-                default:
-                    console.error("Unexpected encodedValue encountered in handleActionClick");
-                    break;
             }
         }
     }
-})
-
-const MODULE_ID = 'token-action-hud-sentiment'
-const REQUIRED_CORE_MODULE_VERSION = '1.5'
-
-Hooks.on('tokenActionHudCoreApiReady', async () => {
-    const module = game.modules.get(MODULE_ID)
-    module.api = {
-        requiredCoreModuleVersion: REQUIRED_CORE_MODULE_VERSION,
-        SystemManager
-    }
-    Hooks.call('tokenActionHudSystemReady', module)
-})
+});

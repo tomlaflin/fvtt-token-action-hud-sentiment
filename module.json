@@ -15,7 +15,7 @@
         "verified": "11"
     },
     "esmodules": [
-        "./scripts/token-action-hud-sentiment.mjs"
+        "./scripts/init.mjs"
     ],
     "relationships": {
         "systems": [
