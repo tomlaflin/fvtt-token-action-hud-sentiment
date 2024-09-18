@@ -1,4 +1,15 @@
-import { ActionType } from './constants.mjs'
+import {
+    ActionType,
+    GroupType
+} from './constants.mjs'
+
+import {
+    CORE_ROLLS_GROUP,
+    CUSTOM_ROLLS_GROUP,
+    ATTRIBUTE_STATUS_GROUP,
+    SWING_GROUP,
+    SWING_NONE_GROUP
+} from './groups.mjs'
 
 export let ActionHandler = null;
 
@@ -49,19 +60,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * Build and populate the group containing Sentiment's core roll actions.
          */
         #buildCoreRollGroup() {
-            const coreRollGroup = {
-                id: 'core-rolls',
-                type: 'system'
-            };
-
-            this.addGroup(coreRollGroup);
+            this.addGroup(CORE_ROLLS_GROUP);
             this.addActions(
                 [
                     CoreRollAction.RollToDo,
                     CoreRollAction.RollToDye,
                     CoreRollAction.RecoveryRoll
                 ],
-                coreRollGroup);
+                CORE_ROLLS_GROUP);
         }
 
         /**
@@ -72,11 +78,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (!customRolls.length) {
                 return;
             }
-
-            const customRollGroup = {
-                id: 'custom-rolls',
-                type: 'system'
-            };
 
             const actions = customRolls.map((customRoll) => {
                 const value = {
@@ -98,19 +99,17 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
             });
 
-            this.addGroup(customRollGroup);
-            this.addActions(actions, customRollGroup);
+            this.addGroup(CUSTOM_ROLLS_GROUP);
+            this.addActions(actions, CUSTOM_ROLLS_GROUP);
         }
 
         /**
          * Build and populate the group providing actions to set the status of each of the character's attributes.
          */
         #buildAttributeStatusGroup() {
-            const attributeStatusParentGroup = { id: 'attribute-status' };
             const attributes = this.actor.getAttributes();
-
             if (!attributes.length) {
-                this.removeGroup(attributeStatusParentGroup);
+                this.removeGroup(ATTRIBUTE_STATUS_GROUP);
                 return;
             }
 
@@ -118,7 +117,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const attributeStatusGroup = {
                     id: ActionType.SetAttributeStatus + '_' + attribute._id,
                     name: attribute.name,
-                    type: 'system-derived',
+                    type: GroupType.SystemDerived,
                     settings: {
                         showTitle: true,
                         //image: attribute.img
@@ -159,7 +158,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     }
                 ];
 
-                this.addGroup(attributeStatusGroup, attributeStatusParentGroup);
+                this.addGroup(attributeStatusGroup, ATTRIBUTE_STATUS_GROUP);
                 this.addActions(actions, attributeStatusGroup);
             });
         }
@@ -168,19 +167,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * Build and populate the group providing actions to set the character's swing attribute and value.
          */
         #buildSwingGroup() {
-            const swingParentGroup = { id: 'swing' };
             const healthyAttributes = this.actor.getAttributes().filter((attribute) => attribute.system.status == CONFIG.Sentiment.AttributeStatus.Normal);
 
             if (!healthyAttributes.length) {
-                this.removeGroup(swingParentGroup);
+                this.removeGroup(SWING_GROUP);
                 return;
             }
 
             const currentSwing = this.actor.system.swing;
-            const swingNoneGroup = {
-                id: 'swing-none',
-                type: 'system'
-            };
 
             const swingNoneAction = {
                 id: 'swing-none-action',
@@ -193,14 +187,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 swingNoneAction.cssClass += ' active';
             }
 
-            this.addGroup(swingNoneGroup, swingParentGroup);
-            this.addActions([swingNoneAction], swingNoneGroup);
+            this.addGroup(SWING_NONE_GROUP, SWING_GROUP);
+            this.addActions([swingNoneAction], SWING_NONE_GROUP);
 
             healthyAttributes.forEach((attribute) => {
                 const attributeSetSwingGroup = {
                     id: ActionType.SetSwing + '_' + attribute._id,
                     name: attribute.name,
-                    type: 'system-derived',
+                    type: GroupType.SystemDerived,
                     settings: {
                         showTitle: true,
                         //image: attribute.img
@@ -221,7 +215,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     });
                 }
 
-                this.addGroup(attributeSetSwingGroup, swingParentGroup);
+                this.addGroup(attributeSetSwingGroup, SWING_GROUP);
                 this.addActions(actions, attributeSetSwingGroup);
             });
         }

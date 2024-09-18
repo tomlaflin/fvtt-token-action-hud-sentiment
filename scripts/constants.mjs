@@ -1,4 +1,14 @@
 /**
+ * Group types. Duplicated from Token Action HUD Core module.
+ */
+export const GroupType = {
+    Compendium: 'compendium',
+    Custom: 'custom',
+    System: 'system',
+    SystemDerived: 'system-derived'
+}
+
+/**
 * Identifiers for the types of actions the HUD can display.
 */
 export const ActionType = Object.freeze({

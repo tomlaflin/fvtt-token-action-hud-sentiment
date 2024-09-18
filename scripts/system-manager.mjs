@@ -1,6 +1,6 @@
 import { ActionHandler } from './action-handler.mjs'
 import { RollHandler } from './roll-handler.mjs'
-import { DEFAULT_LAYOUT } from './default-layout.mjs'
+import { DEFAULT_LAYOUT } from './groups.mjs'
 
 export let SystemManager = null
 
