@@ -87,12 +87,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
                 const coreRollAction = CoreRollActions[customRoll.system.rollType];
                 if (!coreRollAction) {
-                    console.error("Unexpected roll type " + customRoll.system.rollType + " on Custom Roll with ID  " + customRoll._id);
+                    console.error(`Unexpected roll type ${customRoll.system.rollType} on Custom Roll with ID ${customRoll._id}`);
                     return {};
                 }
 
                 return {
-                    id: ActionType.CustomRoll + '_' + customRoll._id,
+                    id: `${ActionType.CustomRoll}_${customRoll._id}`,
                     name: customRoll.name,
                     encodedValue: JSON.stringify(value),
                     img: coreRollAction.img
@@ -115,7 +115,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             attributes.forEach((attribute) => {
                 const attributeStatusGroup = {
-                    id: ActionType.SetAttributeStatus + '_' + attribute._id,
+                    id: `${ActionType.SetAttributeStatus}_${attribute._id}`,
                     name: attribute.name,
                     type: GroupType.SystemDerived,
                     settings: {
@@ -127,7 +127,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const currentStatus = attribute.system.status;
                 const actions = [
                     {
-                        id: attributeStatusGroup.id + '_normal',
+                        id: `${attributeStatusGroup.id}_normal`,
                         name: "Normal",
                         encodedValue: JSON.stringify({
                             action: ActionType.SetAttributeStatus,
@@ -137,7 +137,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.Normal ? "toggle active" : "toggle"
                     },
                     {
-                        id: attributeStatusGroup.id + '_locked-out',
+                        id: `${attributeStatusGroup.id}_locked-out`,
                         name: "Locked Out",
                         encodedValue: JSON.stringify({
                             action: ActionType.SetAttributeStatus,
@@ -147,7 +147,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.LockedOut ? "toggle active" : "toggle"
                     },
                     {
-                        id: attributeStatusGroup.id + '_wounded',
+                        id: `${attributeStatusGroup.id}_wounded`,
                         name: "Wounded",
                         encodedValue: JSON.stringify({
                             action: ActionType.SetAttributeStatus,
@@ -192,7 +192,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             healthyAttributes.forEach((attribute) => {
                 const attributeSetSwingGroup = {
-                    id: ActionType.SetSwing + '_' + attribute._id,
+                    id: `${ActionType.SetSwing}_${attribute._id}`,
                     name: attribute.name,
                     type: GroupType.SystemDerived,
                     settings: {
@@ -204,7 +204,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const actions = [];
                 for (let swingValue = attribute.system.modifier + 1; swingValue < attribute.system.modifier + 7; swingValue++) {
                     actions.push({
-                        id: attributeSetSwingGroup.id + '_' + swingValue,
+                        id: `${attributeSetSwingGroup.id}_${swingValue}`,
                         name: `${swingValue}`,
                         encodedValue: JSON.stringify({
                             action: ActionType.SetSwing,
