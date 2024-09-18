@@ -170,18 +170,22 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         }
                     }
 
+                    const currentStatus = attribute.system.status;
                     const actions = [
                         {
                             id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_normal',
-                            name: "Normal"
+                            name: "Normal",
+                            cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.Normal ? "toggle active" : "toggle"
                         },
                         {
                             id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_locked-out',
-                            name: "Locked Out"
+                            name: "Locked Out",
+                            cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.LockedOut ? "toggle active" : "toggle"
                         },
                         {
                             id: ActionType.SetAttributeStatus + '_' + attributeStatusGroup.id + '_wounded',
-                            name: "Wounded"
+                            name: "Wounded",
+                            cssClass: currentStatus === CONFIG.Sentiment.AttributeStatus.Wounded ? "toggle active" : "toggle"
                         }
                     ];
 
