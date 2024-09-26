@@ -10,6 +10,8 @@
         }
     ],
     "url": "https://github.com/tomlaflin/fvtt-token-action-hud-sentiment",
+    "manifest": "https://raw.githubusercontent.com/tomlaflin/fvtt-token-action-hud-sentiment/main/module.json",
+    "download": "https://github.com/tomlaflin/fvtt-token-action-hud-sentiment/archive/refs/tags/v0.1.0.zip",
     "version": "0.1.0",
     "compatibility": {
         "minimum": "11",
