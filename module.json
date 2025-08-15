@@ -15,7 +15,7 @@
     "version": "0.1.0",
     "compatibility": {
         "minimum": "11",
-        "verified": "12.331"
+        "verified": "13.347"
     },
     "esmodules": [
         "./scripts/init.mjs"
@@ -36,7 +36,8 @@
                 "id": "token-action-hud-core",
                 "type": "module",
                 "compatibility": {
-                    "verified": "1.5.6"
+                    "minimum": "1.5.6",
+                    "verified": "2.0.16"
                 }
             }
         ]
